@@ -15,12 +15,20 @@ export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const [state, formAction, isPending] = useActionState(checkNote, initialState);
 
   const allTags = Array.from(new Set(notes.flatMap((note) => note.tags))).sort();
-  const visibleNotes = activeTag
-    ? notes.filter((note) => note.tags.includes(activeTag))
-    : notes;
+  const visibleNotes = notes.filter((note) => {
+    const matchesTag = activeTag ? note.tags.includes(activeTag) : true;
+    const query = search.trim().toLowerCase();
+    const matchesSearch =
+      query.length === 0 ||
+      note.title.toLowerCase().includes(query) ||
+      note.body.toLowerCase().includes(query);
+
+    return matchesTag && matchesSearch;
+  });
 
   useEffect(() => {
     try {
@@ -135,6 +143,19 @@ export default function Home() {
           ) : null}
         </div>
 
+        <div className="space-y-3">
+          <label htmlFor="search" className="block text-sm font-medium text-zinc-700">
+            Search notes
+          </label>
+          <input
+            id="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search by title or body"
+            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none transition focus:border-zinc-500"
+          />
+        </div>
+
         {allTags.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {allTags.map((tag) => (
@@ -156,7 +177,9 @@ export default function Home() {
 
         {visibleNotes.length === 0 ? (
           <p className="text-zinc-500">
-            {activeTag ? `No notes tagged with #${activeTag}.` : "No notes yet."}
+            {search.trim() || activeTag
+              ? "No notes match your search."
+              : "No notes yet."}
           </p>
         ) : (
           <ul className="space-y-4">
