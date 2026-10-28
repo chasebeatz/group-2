@@ -64,6 +64,10 @@ export default function Home() {
     }
   }, [state.note]);
 
+  const handleDelete = (indexToDelete: number) => {
+    setNotes((current) => current.filter((_, index) => index !== indexToDelete));
+  };
+
   return (
     <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 p-6">
       <h1 className="text-3xl font-semibold">Notes</h1>
@@ -185,7 +189,16 @@ export default function Home() {
           <ul className="space-y-4">
             {visibleNotes.map((note, index) => (
               <li key={`${note.title}-${index}`} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-                <h3 className="text-lg font-semibold">{note.title}</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-lg font-semibold">{note.title}</h3>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(notes.indexOf(note))}
+                    className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 transition hover:bg-red-100"
+                  >
+                    Delete
+                  </button>
+                </div>
                 <div className="mt-2 text-zinc-700 [&_h1]:mt-0 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-zinc-900 [&_h2]:mt-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_p]:my-2 [&_strong]:font-semibold [&_strong]:text-zinc-900">
                   <ReactMarkdown>{note.body}</ReactMarkdown>
                 </div>
