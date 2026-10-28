@@ -14,7 +14,13 @@ const initialState = {
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [state, formAction, isPending] = useActionState(checkNote, initialState);
+
+  const allTags = Array.from(new Set(notes.flatMap((note) => note.tags))).sort();
+  const visibleNotes = activeTag
+    ? notes.filter((note) => note.tags.includes(activeTag))
+    : notes;
 
   useEffect(() => {
     try {
@@ -111,13 +117,50 @@ export default function Home() {
       </form>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Saved notes</h2>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold">Saved notes</h2>
 
-        {notes.length === 0 ? (
-          <p className="text-zinc-500">No notes yet.</p>
+          {allTags.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => setActiveTag(null)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                activeTag === null
+                  ? "bg-zinc-900 text-white"
+                  : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300"
+              }`}
+            >
+              All
+            </button>
+          ) : null}
+        </div>
+
+        {allTags.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setActiveTag((current) => (current === tag ? null : tag))}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                  activeTag === tag
+                    ? "bg-zinc-900 text-white"
+                    : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300"
+                }`}
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {visibleNotes.length === 0 ? (
+          <p className="text-zinc-500">
+            {activeTag ? `No notes tagged with #${activeTag}.` : "No notes yet."}
+          </p>
         ) : (
           <ul className="space-y-4">
-            {notes.map((note, index) => (
+            {visibleNotes.map((note, index) => (
               <li key={`${note.title}-${index}`} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
                 <h3 className="text-lg font-semibold">{note.title}</h3>
                 <div className="mt-2 text-zinc-700 [&_h1]:mt-0 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-zinc-900 [&_h2]:mt-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_p]:my-2 [&_strong]:font-semibold [&_strong]:text-zinc-900">
@@ -127,12 +170,18 @@ export default function Home() {
                 {note.tags.length > 0 ? (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {note.tags.map((tag) => (
-                      <span
+                      <button
                         key={`${tag}-${index}`}
-                        className="rounded-full bg-zinc-200 px-2 py-1 text-xs font-medium text-zinc-700"
+                        type="button"
+                        onClick={() => setActiveTag((current) => (current === tag ? null : tag))}
+                        className={`rounded-full px-2 py-1 text-xs font-medium transition ${
+                          activeTag === tag
+                            ? "bg-zinc-900 text-white"
+                            : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300"
+                        }`}
                       >
                         #{tag}
-                      </span>
+                      </button>
                     ))}
                   </div>
                 ) : null}
