@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { checkNote, type Note } from "./actions";
 
 const STORAGE_KEY = "notes";
@@ -119,7 +120,9 @@ export default function Home() {
             {notes.map((note, index) => (
               <li key={`${note.title}-${index}`} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
                 <h3 className="text-lg font-semibold">{note.title}</h3>
-                <p className="mt-2 whitespace-pre-wrap text-zinc-700">{note.body}</p>
+                <div className="mt-2 text-zinc-700 [&_h1]:mt-0 [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:text-zinc-900 [&_h2]:mt-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-1 [&_p]:my-2 [&_strong]:font-semibold [&_strong]:text-zinc-900">
+                  <ReactMarkdown>{note.body}</ReactMarkdown>
+                </div>
 
                 {note.tags.length > 0 ? (
                   <div className="mt-3 flex flex-wrap gap-2">
