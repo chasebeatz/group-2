@@ -3,6 +3,8 @@
 import { useActionState, useEffect, useState } from "react";
 import { checkNote, type Note } from "./actions";
 
+const STORAGE_KEY = "notes";
+
 const initialState = {
   error: "",
   note: null,
@@ -10,7 +12,36 @@ const initialState = {
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [state, formAction, isPending] = useActionState(checkNote, initialState);
+
+  useEffect(() => {
+    try {
+      const savedNotes = localStorage.getItem(STORAGE_KEY);
+      if (savedNotes) {
+        const parsedNotes = JSON.parse(savedNotes) as Note[];
+        if (Array.isArray(parsedNotes)) {
+          setNotes(parsedNotes);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load notes from localStorage.", error);
+    } finally {
+      setIsHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    } catch (error) {
+      console.error("Failed to save notes to localStorage.", error);
+    }
+  }, [notes, isHydrated]);
 
   useEffect(() => {
     if (state.note) {
