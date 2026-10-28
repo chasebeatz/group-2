@@ -69,12 +69,12 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-8 p-6">
-      <h1 className="text-3xl font-semibold">Notes</h1>
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4 sm:gap-8 sm:p-6">
+      <h1 className="text-2xl font-semibold sm:text-3xl">Notes</h1>
 
       <form
         action={formAction}
-        className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:space-y-4 sm:p-6"
       >
         <div className="space-y-2">
           <label htmlFor="title" className="block text-sm font-medium text-zinc-700">
@@ -129,8 +129,8 @@ export default function Home() {
       </form>
 
       <section className="space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="text-xl font-semibold">Saved notes</h2>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold sm:text-xl">Saved notes</h2>
 
           {allTags.length > 0 ? (
             <button
@@ -147,7 +147,7 @@ export default function Home() {
           ) : null}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <label htmlFor="search" className="block text-sm font-medium text-zinc-700">
             Search notes
           </label>
@@ -156,7 +156,7 @@ export default function Home() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by title or body"
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none transition focus:border-zinc-500"
+            className="w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none transition focus:border-zinc-500"
           />
         </div>
 
@@ -167,7 +167,7 @@ export default function Home() {
                 key={tag}
                 type="button"
                 onClick={() => setActiveTag((current) => (current === tag ? null : tag))}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
                   activeTag === tag
                     ? "bg-zinc-900 text-white"
                     : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300"
@@ -186,15 +186,15 @@ export default function Home() {
               : "No notes yet."}
           </p>
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-3 sm:space-y-4">
             {visibleNotes.map((note, index) => (
-              <li key={`${note.title}-${index}`} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+              <li key={`${note.title}-${index}`} className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-lg font-semibold">{note.title}</h3>
+                  <h3 className="text-base font-semibold sm:text-lg">{note.title}</h3>
                   <button
                     type="button"
                     onClick={() => handleDelete(notes.indexOf(note))}
-                    className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 transition hover:bg-red-100"
+                    className="shrink-0 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-[11px] font-medium text-red-700 transition hover:bg-red-100"
                   >
                     Delete
                   </button>
